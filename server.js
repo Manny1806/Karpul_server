@@ -9,9 +9,9 @@ const passport = require('passport');
 
 const { PORT, MONGODB_URI} = require('./config');
 
-// const usersRouter   = require('./routes/user-router');
-// const authRouter  = require('./routes/auth-router');
-// const { localStrategy, jwtStrategy } = require('./auth/strategies');
+const usersRouter   = require('./routes/user-router');
+const authRouter  = require('./routes/auth-router');
+const { localStrategy, jwtStrategy } = require('./auth/strategies');
 
 const app = express();
 
@@ -34,11 +34,11 @@ app.use(function (req, res, next) {
   next();
 });
 
-// passport.use(localStrategy);
-// passport.use(jwtStrategy);
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
-// app.use('/api/users/', usersRouter);
-// app.use('/api/auth/', authRouter);
+app.use('/api/users/', usersRouter);
+app.use('/api/auth/', authRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
