@@ -5,12 +5,24 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const UserSchema = mongoose.Schema({
-  username: {
+  userName: {
     type: String,
     required: true,
     unique: true
   },
   password: {
+    type: String,
+    required: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  phone: {
     type: String,
     required: true
   }
@@ -26,8 +38,11 @@ UserSchema.set('toObject', {
 
 UserSchema.methods.serialize = function() {
   return {
-    username: this.username || '',
-    _id: this._id
+    userName: this.userName || '',
+    _id: this._id,
+    firstName: this.firstName,
+    lastName: this.lastName,
+    phone: this.phone,
   };
 };
 
