@@ -7,6 +7,11 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
 
+
+const multer = require('multer');
+const cloudinary = require('cloudinary');
+const {fileUploadMiddleware} = require('./node-file-upload-middleware');
+
 const { PORT, MONGODB_URI} = require('./config');
 
 const usersRouter   = require('./routes/user-router');
@@ -16,6 +21,12 @@ const { localStrategy, jwtStrategy } = require('./auth/strategies');
 const app = express();
 
 mongoose.Promise = global.Promise;
+
+cloudinary.config({
+  cloud_name: 'disoi1bmd',
+  api_key: '614697612986849',
+  api_secret: 'hHx7K5hLoaOQwZacQnttqGRFFaU',
+});
 
 app.use(express.json());
 
@@ -54,9 +65,15 @@ app.get('/api/protected', jwtAuth, (req, res) => {
   });
 });
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+app.post('/api/files', upload.single('file'), fileUploadMiddleware);
+
 app.use('*', (req, res) => {
   return res.status(404).json({ message: 'Not Found' });
 });
+
+
 
 let server;
 
