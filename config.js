@@ -10,3 +10,5 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d',
 };
+
+// MONGODB_URI=mongodb://karpul:karpul1@ds127362.mlab.com:27362/karpul

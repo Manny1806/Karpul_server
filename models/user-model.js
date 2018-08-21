@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const UserSchema = mongoose.Schema({
-  userName: {
+  username: {
     type: String,
     required: true,
     unique: true
@@ -38,7 +38,7 @@ UserSchema.set('toObject', {
 
 UserSchema.methods.serialize = function() {
   return {
-    userName: this.userName || '',
+    username: this.username || '',
     _id: this._id,
     firstName: this.firstName,
     lastName: this.lastName,
