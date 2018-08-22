@@ -25,6 +25,9 @@ const UserSchema = mongoose.Schema({
   phone: {
     type: String,
     required: true
+  },
+  profilePicUrl: {
+    type: String,
   }
 });
 
@@ -43,6 +46,7 @@ UserSchema.methods.serialize = function() {
     firstName: this.firstName,
     lastName: this.lastName,
     phone: this.phone,
+    profilePicUrl: this.profilePicUrl
   };
 };
 
