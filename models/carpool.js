@@ -23,7 +23,6 @@ const CarpoolSchema = mongoose.Schema({
   },
   arrivalTime: {type: Date, required: true},
   openSeats: {type: Number, default: 1},
-  phone: {type: String,required: true},
   users: [{
       username: {type: String, required: true},
       host: {type: Boolean, required: true}
@@ -41,4 +40,4 @@ CarpoolSchema.set('toObject', {
 
 const Carpool = mongoose.model('Carpool', CarpoolSchema);
 
-module.exports = {CarpoolSchema};
+module.exports = {Carpool};
