@@ -11,23 +11,33 @@ const CarpoolSchema = mongoose.Schema({
     streetName: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
-    zipcode: {type: String, required: true}
+    zipcode: {type: String, required: true},
+    location: {
+      type: {
+        type: String,
+        enum: ['Point']
+      },
+      coordinates: []
+    }
   },
   endAddress: {
     streetNumber: {type: String, required: true},
     streetName: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
-    zipcode: {type: String, required: true}
+    zipcode: {type: String, required: true},
+    location: {
+      type: {
+        type: String,
+        enum: ['Point']
+      },
+      coordinates: []
+    }
   },
-  arrivalTime: {type: Date, required: true},
-  openSeats: {type: Number, default: 1},
-  users: [{
-    username: {type: String, required: true}, // 
-    host: {type: Boolean, required: true} // populate the user based on userID
-  }], // host should not be a boolean
-  details: {type: String, required: true},
-  pendingRequests: [/*user ids */]
+  arrivalTime: {type: String, required: true},
+  openSeats: {type: String},
+  host: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  details: {type: String, required: true}
 });
 
 CarpoolSchema.set('toObject', {
