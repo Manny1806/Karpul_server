@@ -1,12 +1,11 @@
+'use strict';
+
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
 const CarpoolSchema = mongoose.Schema({
-  carpoolTitle: {
-    type: String,
-    required: true
-  },
+  carpoolTitle: {type: String, required: true},
   startAddress: {
     streetNumber: {type: String, required: true},
     streetName: {type: String, required: true},
@@ -24,9 +23,11 @@ const CarpoolSchema = mongoose.Schema({
   arrivalTime: {type: Date, required: true},
   openSeats: {type: Number, default: 1},
   users: [{
-      username: {type: String, required: true},
-      host: {type: Boolean, required: true}
-  }]
+    username: {type: String, required: true}, // 
+    host: {type: Boolean, required: true} // populate the user based on userID
+  }], // host should not be a boolean
+  details: {type: String, required: true},
+  pendingRequests: [/*user ids */]
 });
 
 CarpoolSchema.set('toObject', {
