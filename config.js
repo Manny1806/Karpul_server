@@ -10,5 +10,6 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d',
   app_id: process.env.app_id || 'fail',
-  app_code: process.env.app_code || 'fail' 
+  app_code: process.env.app_code || 'fail',
+  GEOCODER_API: process.env.GEOCODER_API || '' 
 };
