@@ -18,7 +18,6 @@ router.get('/', (req, res) => {
   let filter = { userId };
 
   return Carpool.find(filter)
-  .then(console.log('got here'))
     .then(carpools => res.json(carpools.map(carpools => carpools.serialize())))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
