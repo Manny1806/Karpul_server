@@ -9,6 +9,7 @@ module.exports = {
   TEST_MONGODB_URI: process.env.TEST_MONGODB_URI || 'mongodb://localhost/karpul-test',
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRY: process.env.JWT_EXPIRY || '7d',
+  app_id: process.env.app_id || 'fail',
+  app_code: process.env.app_code || 'fail',
+  GEOCODER_API: process.env.GEOCODER_API || '' 
 };
-
-// MONGODB_URI=mongodb://karpul:karpul1@ds127362.mlab.com:27362/karpul

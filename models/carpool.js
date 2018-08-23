@@ -4,6 +4,26 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+
+
+const GeoSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['Point']
+  },
+  coordinates: []
+});
+// const GeoSchema = new mongoose.Schema({
+//   type: {
+//     type: String,
+//     default: 'Point'
+//   },
+//   coordinates: {
+//     type: [Number],
+//     index: '2dsphere'
+//   }
+// });
+
 const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
   startAddress: {
@@ -12,28 +32,14 @@ const CarpoolSchema = mongoose.Schema({
     city: {type: String, required: true},
     state: {type: String, required: true},
     zipcode: {type: String, required: true},
-    location: {
-      type: {
-        type: String,
-        enum: ['Point']
-      },
-      coordinates: []
-    }
-  },
+    location: GeoSchema},  
   endAddress: {
     streetNumber: {type: String, required: true},
     streetName: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
     zipcode: {type: String, required: true},
-    location: {
-      type: {
-        type: String,
-        enum: ['Point']
-      },
-      coordinates: []
-    }
-  },
+    location: GeoSchema},
   arrivalTime: {type: String, required: true},
   openSeats: {type: String},
   host: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
