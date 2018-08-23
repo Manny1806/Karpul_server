@@ -150,6 +150,20 @@ router.get('/:id', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
+router.get('/userData/:id', (req, res) => {
+  return User.findById(req.params.id)
+    .then(user => res.json(user))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.post('/userData/:id', (req, res) => {
+  return User.findById(req.params.id)
+    .then(user => {
+      user.bio
+      res.json(user)})
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 router.post('/:id', (req, res) => {
   console.log(req.params.id)
   return User.findById(req.params.id)
