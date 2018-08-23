@@ -51,7 +51,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
     host: req.user._id
   };
 
-  console.log(tempObj.coordinates);
+  console.log(tempObj);
   return Carpool.create(tempObj)
     .then(carpool => {  
       console.log(carpool)    ;

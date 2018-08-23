@@ -4,16 +4,25 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+
+
 const GeoSchema = new mongoose.Schema({
   type: {
     type: String,
-    default: 'Point'
+    enum: ['Point']
   },
-  coordinates: {
-    type: [Number],
-    index: '2dsphere'
-  }
+  coordinates: []
 });
+// const GeoSchema = new mongoose.Schema({
+//   type: {
+//     type: String,
+//     default: 'Point'
+//   },
+//   coordinates: {
+//     type: [Number],
+//     index: '2dsphere'
+//   }
+// });
 
 const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
@@ -49,13 +58,3 @@ CarpoolSchema.set('toObject', {
 const Carpool = mongoose.model('Carpool', CarpoolSchema);
 
 module.exports = {Carpool};
-
-
-//   location: {
-//     type: {
-//       type: String,
-//       enum: ['Point']
-//     },
-//     coordinates: []
-//   }
-// },
