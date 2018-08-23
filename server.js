@@ -17,6 +17,7 @@ const { PORT, MONGODB_URI} = require('./config');
 const usersRouter   = require('./routes/user-router');
 const authRouter  = require('./routes/auth-router');
 const carpoolRouter = require('./routes/carpool-router')
+const profilePicRouter = require('./routes/profile-pic-router')
 const { localStrategy, jwtStrategy } = require('./auth/strategies');
 
 const app = express();
@@ -49,9 +50,10 @@ app.use(function (req, res, next) {
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-app.use('/api/users', usersRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/carpools', carpoolRouter);
+app.use('/api/users/', usersRouter);
+app.use('/api/auth/', authRouter);
+app.use('/api/carpool/', carpoolRouter);
+app.use('/api/profilePic/', profilePicRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

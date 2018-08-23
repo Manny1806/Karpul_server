@@ -89,9 +89,10 @@ router.post('/', jsonParser, (req, res) => {
   }
 
   let {username, password, firstName, lastName, phone } = req.body;
+  let profilePicUrl = "https://www.freeiconspng.com/uploads/no-image-icon-11.PNG"
   // Username and password come in pre-trimmed, otherwise we throw an error
   // before this
-
+  console.log("here")
   return User.find({username})
     .count()
     .then(count => {
@@ -105,18 +106,22 @@ router.post('/', jsonParser, (req, res) => {
         });
       }
       // If there is no existing user, hash the password
+      console.log("here2")
       return User.hashPassword(password);
     })
     .then(hash => {
+      console.log("here3")
       return User.create({
         username,
         password: hash,
         firstName,
         lastName,
-        phone
+        phone,
+        profilePicUrl
       });
     })
     .then(user => {
+      console.log("here")
       return res.status(201).json(user.serialize());
     })
     .catch(err => {
@@ -136,6 +141,24 @@ router.post('/', jsonParser, (req, res) => {
 router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.get('/:id', (req, res) => {
+  return User.findById(req.params.id)
+    .then(user => res.json(user.profilePicUrl))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.post('/:id', (req, res) => {
+  console.log(req.params.id)
+  return User.findById(req.params.id)
+    .then(user => {
+      user.profilePicUrl = req.body.profilePicUrl
+      user.save()
+      return user
+    })
+    .then(user => res.json(user.serialize()))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
