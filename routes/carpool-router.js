@@ -13,6 +13,16 @@ const jsonParser = bodyParser.json();
 
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
+router.get('/', (req, res) => {
+  const userId = req.user._id;
+  let filter = { userId };
+
+  return Carpool.find(filter)
+  .then(console.log('got here'))
+    .then(carpools => res.json(carpools.map(carpools => carpools.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
 // Post to register a new user
 router.post('/', jsonParser,  async (req, res) =>  {
   let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;  
