@@ -156,11 +156,16 @@ router.get('/userData/:id', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-router.post('/userData/:id', (req, res) => {
-  return User.findById(req.params.id)
+router.post('/userData', (req, res) => {
+  return User.findById(req.body.id)
     .then(user => {
-      user.bio
-      res.json(user)})
+      console.log(req.body)
+      user.bio = req.body.bio
+      user.phone = req.body.phone
+      user.state = req.body.state
+      user.city = req.body.city
+      user.save()
+      return res.json(user)})
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 

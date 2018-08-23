@@ -22,12 +22,21 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
   phone: {
     type: String,
     required: true
   },
   profilePicUrl: {
     type: String,
+  },
+  bio: {
+    type: String
   }
 });
 
@@ -46,6 +55,8 @@ UserSchema.methods.serialize = function() {
     firstName: this.firstName,
     lastName: this.lastName,
     phone: this.phone,
+    city: this.city,
+    state: this.state,
     profilePicUrl: this.profilePicUrl
   };
 };
