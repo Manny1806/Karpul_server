@@ -1,66 +1,65 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const config = require('../config');
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 const {Carpool} = require('../models/carpool');
-
 const router = express.Router();
+const passport = require('passport');
 
 const jsonParser = bodyParser.json();
 
+router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+
 // Post to register a new user
-router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['carpoolTitle', 'startAddress', 'endAddress', 'arrivalTime', 'openSeats', 'users'];
-  const missingField = requiredFields.find(field => !(field in req.body));
+router.post('/', jsonParser,  async (req, res) =>  {
+  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;  
+  let start = startAddress.streetNumber + startAddress.streetName + startAddress.city + startAddress.state + startAddress.zipcode;  
 
-  if (missingField) {
-    return res.status(422).json({
-      code: 422,
-      reason: 'ValidationError',
-      message: 'Missing field',
-      location: missingField
-    });
-  }
+  const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
+                        .then((response) => {
+                          if (response.status >= 400) {
+                            throw new Error('Bad response from server');
+                          }
+                          return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                        })
+                        .catch(err => err);
+    
+    startAddress.location = {coordinates: coord};;
 
-  const stringFields = ['username', 'password','firstName', 'lastName', 'phone'];
-  const nonStringField = stringFields.find(
-    field => field in req.body && typeof req.body[field] !== 'string'
-  );
-
-  if (nonStringField) {
-    return res.status(422).json({
-      code: 422,
-      reason: 'ValidationError',
-      message: 'Incorrect field type: expected string',
-      location: nonStringField
-    });
-  }
-
-  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, users } = req.body;
+  let end = endAddress.streetNumber + endAddress.streetName + endAddress.city + endAddress.state + endAddress.zipcode;  
+  const coordEnd = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${end}`)
+                          .then((response) => {
+                            if (response.status >= 400) {
+                              throw new Error('Bad response from server');
+                            }
+                            return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                          })
+                          .catch(err => err);
   
+  endAddress.location = {coordinates: coordEnd};
 
-  
-return Carpool.create({
+  const tempObj = {
     carpoolTitle,
     startAddress,
     endAddress,
     arrivalTime,
     openSeats,
-    users
-    
-})
-.then(carpool => {
-    return res.status(201).json(carpool);
-})
-.catch(err => {
-    // Forward validation errors on to the client, otherwise give a 500
-    // error because something unexpected has happened
-    if (err.reason === 'ValidationError') {
-    return res.status(err.code).json(err);
-    }
-    res.status(500).json({code: 500, message: 'Internal server error'});
-});
-});
+    details,
+    host: req.user._id
+  };
 
+  console.log(tempObj);
+  return Carpool.create(tempObj)
+    .then(carpool => {  
+      console.log(carpool)    ;
+      return res.status(201).json(carpool);
+    })
+    .catch(err => {
+      res.status(500).json({code: 500, message: err});
+    });
+});
 
 module.exports = router;

@@ -52,8 +52,8 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
-app.use('/api/carpool/', carpoolRouter)
-app.use('/api/profilePic/', profilePicRouter)
+app.use('/api/carpool/', carpoolRouter);
+app.use('/api/profilePic/', profilePicRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
