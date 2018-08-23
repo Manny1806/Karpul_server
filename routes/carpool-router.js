@@ -1,9 +1,11 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const config = require('../config');
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 const {Carpool} = require('../models/carpool');
-
 const router = express.Router();
 const passport = require('passport');
 
@@ -12,14 +14,33 @@ const jsonParser = bodyParser.json();
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 // Post to register a new user
-router.post('/', jsonParser, (req, res) => {
+router.post('/', jsonParser,  async (req, res) =>  {
+  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;  
+  let start = startAddress.streetNumber + startAddress.streetName + startAddress.city + startAddress.state + startAddress.zipcode;  
 
-  // console.log(req.body);
+  const coord = await fetch(`https://geocoder.api.here.com/6.2/geocode.json?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
+                        .then((response) => {
+                          if (response.status >= 400) {
+                            throw new Error('Bad response from server');
+                          }
+                          return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                        })
+                        .catch(err => err);
+    
+    startAddress.location = {coordinates: coord};;
+
+  let end = endAddress.streetNumber + endAddress.streetName + endAddress.city + endAddress.state + endAddress.zipcode;  
+  const coordEnd = await fetch(`https://geocoder.api.here.com/6.2/geocode.json?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${end}`)
+                          .then((response) => {
+                            if (response.status >= 400) {
+                              throw new Error('Bad response from server');
+                            }
+                            return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                          })
+                          .catch(err => err);
   
-  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;
+  endAddress.location = {coordinates: coordEnd};
 
-  // startAddress.location.coordinates = [voodoo magic];
-  // endAddress.location.coordinates = [voodoo magic];
 
   return Carpool.create({
     carpoolTitle,
@@ -30,14 +51,13 @@ router.post('/', jsonParser, (req, res) => {
     details,
     host: req.user._id
   })
-    .then(carpool => {
-      console.log(carpool);
+    .then(carpool => {  
+      console.log(carpool)    ;
       return res.status(201).json(carpool);
     })
     .catch(err => {
       res.status(500).json({code: 500, message: err});
     });
 });
-
 
 module.exports = router;
