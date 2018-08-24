@@ -15,11 +15,11 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 
 router.get('/', (req, res) => {
   const userId = req.user._id;
-  let filter = { userId };
 
-  return Carpool.find(filter)
-    .then(carpools => res.json(carpools.map(carpools => carpools.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+  return Carpool.find({host: userId}) // host || users array is userId
+    // .then(carpools => res.json(carpools.map(carpools => carpools.serialize())))
+    .then(carpools => res.json(carpools))
+    .catch(err => res.status(500).json(err));
 });
 
 // Post to register a new user
@@ -44,7 +44,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
                             if (response.status >= 400) {
                               throw new Error('Bad response from server');
                             }
-                            return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                            return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]); //.Result is undefined or doesn't exist
                           })
                           .catch(err => err);
   
@@ -63,7 +63,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
   console.log(tempObj);
   return Carpool.create(tempObj)
     .then(carpool => {  
-      console.log(carpool)    ;
+      // console.log(carpool);
       return res.status(201).json(carpool);
     })
     .catch(err => {
