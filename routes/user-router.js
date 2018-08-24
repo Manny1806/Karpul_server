@@ -144,8 +144,9 @@ router.get('/', (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-router.get('/:id', (req, res) => {
-  return User.findById(req.params.id)
+router.get('/:username', (req, res) => {
+  const {username} = req.params
+  return User.findOne({username})
     .then(user => res.json(user.profilePicUrl))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
