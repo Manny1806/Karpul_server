@@ -7,10 +7,7 @@ mongoose.Promise = global.Promise;
 
 
 const GeoSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    enum: ['Point']
-  },
+  type: {type: String, default: 'Point'},
   coordinates: []
 });
 // const GeoSchema = new mongoose.Schema({
@@ -46,6 +43,9 @@ const CarpoolSchema = mongoose.Schema({
   details: {type: String, required: true}
 });
 
+CarpoolSchema.index({'startAddress.location': '2dsphere' });
+CarpoolSchema.index({'endAddress.location': '2dsphere' });
+
 CarpoolSchema.set('toObject', {
   virtuals: true,     // include built-in virtual `id`
   versionKey: false,  // remove `__v` version key
@@ -53,7 +53,6 @@ CarpoolSchema.set('toObject', {
     delete ret._id; // delete `_id`
   }
 });
-
 
 const Carpool = mongoose.model('Carpool', CarpoolSchema);
 

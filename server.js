@@ -18,6 +18,7 @@ const usersRouter   = require('./routes/user-router');
 const authRouter  = require('./routes/auth-router');
 const carpoolRouter = require('./routes/carpool-router');
 const profilePicRouter = require('./routes/profile-pic-router');
+const findCarpoolRouter = require('./routes/find-carpool-router');
 const { localStrategy, jwtStrategy } = require('./auth/strategies');
 
 const app = express();
@@ -54,6 +55,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/carpools', carpoolRouter);
 app.use('/api/profilePic', profilePicRouter);
+app.use('/api/findCarpool', findCarpoolRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

@@ -11,6 +11,10 @@ const passport = require('passport');
 
 const jsonParser = bodyParser.json();
 
+function generateGeoCoordinates(coordinateObj){
+  return [coordinateObj["Longitude"], coordinateObj["Latitude"]];
+}
+
 router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 router.get('/', (req, res) => {
@@ -25,7 +29,7 @@ router.get('/', (req, res) => {
 // Post to register a new user
 router.post('/', jsonParser,  async (req, res) =>  {
   let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;  
-  let start = startAddress.streetNumber + startAddress.streetName + startAddress.city + startAddress.state + startAddress.zipcode;  
+  let start = `${startAddress.streetNumber} ${startAddress.streetName} ${startAddress.city} ${startAddress.state} ${startAddress.zipcode}`;  
 
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
                         .then((response) => {
@@ -35,10 +39,10 @@ router.post('/', jsonParser,  async (req, res) =>  {
                           return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
                         })
                         .catch(err => err);
-    
-    startAddress.location = {coordinates: coord};;
+  const geoStartCoordinates = generateGeoCoordinates(coord);
+  startAddress.location = {coordinates: geoStartCoordinates, type:"Point"};
 
-  let end = endAddress.streetNumber + endAddress.streetName + endAddress.city + endAddress.state + endAddress.zipcode;  
+  let end = `${endAddress.streetNumber} ${endAddress.streetName} ${endAddress.city} ${endAddress.state} ${endAddress.zipcode}`;  
   const coordEnd = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${end}`)
                           .then((response) => {
                             if (response.status >= 400) {
@@ -48,7 +52,8 @@ router.post('/', jsonParser,  async (req, res) =>  {
                           })
                           .catch(err => err);
   
-  endAddress.location = {coordinates: coordEnd};
+  const geoEndCoordinates = generateGeoCoordinates(coordEnd);
+  endAddress.location = {coordinates: geoEndCoordinates, type:"Point"};
 
   const tempObj = {
     carpoolTitle,
