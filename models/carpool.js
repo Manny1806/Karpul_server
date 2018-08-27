@@ -40,7 +40,12 @@ const CarpoolSchema = mongoose.Schema({
   arrivalTime: {type: String, required: true},
   openSeats: {type: String},
   host: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  details: {type: String, required: true}
+  details: {type: String, required: true},
+  //users: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId, ref: 'User'
+  //   }
+  // ]
 });
 
 CarpoolSchema.index({'startAddress.location': '2dsphere' });
