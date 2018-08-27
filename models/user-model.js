@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+// end destination -> 30-35 miles (can make this a dropdown in the future)
+// if current location, user model needs address or user enters in their own address
+// 
+
 const UserSchema = mongoose.Schema({
   username: {
     type: String,
