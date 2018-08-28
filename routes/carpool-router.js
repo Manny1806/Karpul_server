@@ -93,6 +93,7 @@ router.put('/', (req, res, next) => {
 router.put('/leave-carpool', (req, res, next) => {
   return Carpool.findByIdAndUpdate(req.body.carpoolId, {$pull: {users: req.user._id}}, {new: true})
     .then(carpool => {
+      console.log(carpool)
       res.status(201).json(carpool);
     })
     .catch(err => {
