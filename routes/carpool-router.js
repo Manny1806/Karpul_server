@@ -20,8 +20,7 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 router.get('/', (req, res) => {
   const userId = req.user._id;
 
-  return Carpool.find({host: userId})
-    .populate('users', '-password')
+  return Carpool.find({users: userId})
     .populate('host', '-password')
     .then(carpools => res.json(carpools))
     .catch(err => res.status(500).json(err));
@@ -80,37 +79,25 @@ router.post('/', jsonParser,  async (req, res) =>  {
 
 // User joining carpool
 router.put('/', (req, res, next) => {
-
-  return Carpool.findById(req.body.carpoolId)
+  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users:req.user._id}}, {new: true})
   .then(carpool => {
-    if ((Number(carpool.openSeats) - carpool.users.length) >= 1) {
-      Carpool.updateOne({carpool}, {$addToSet: {users: req.user._id}}, {new: true})
-    } else {
-      res.status(400).json({err: 'No seats available!'});
-    }
-  })
-  .then(data => {
-    res.status(201).json(data);
+    res.status(201).json(carpool);
   })
   .catch(err => {
     res.status(500).json({code: 500, message: err});
   })
-
-});
+})
 
 // User leaving carpool
 router.put('/leave-carpool', (req, res, next) => {
-  return Carpool.findById(req.body.carpoolId)
-  .then(carpool => {
-    Carpool.updateOne({carpool}, {$pull: {users: req.user._id}})
-  })
-  .then(data => {
-    res.status(204).json(data);
-  })
-  .catch(err => {
-    res.status(500).json({code: 500, message: err});
-  })
-});
+  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$pull: {users: req.user._id}}, {new: true})
+    .then(carpool => {
+      res.status(201).json(carpool);
+    })
+    .catch(err => {
+      res.status(500).json({code: 500, message: err});
+    })
+})
 
 // Host deleting carpool
 router.delete('/', (req, res, next) => {
