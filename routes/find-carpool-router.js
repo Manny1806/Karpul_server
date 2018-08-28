@@ -34,7 +34,8 @@ router.get('/', async (req, res) => {
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
  )
  .populate('users', '-password')
- .then(x => {   
+  .then(x => {   
+    x.geoCoord = [coord.Longitude,coord.Latitude];
   return res.status(201).json(x);
 }
 
