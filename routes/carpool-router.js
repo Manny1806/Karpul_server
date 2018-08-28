@@ -21,6 +21,7 @@ router.get('/', (req, res) => {
   const userId = req.user._id;
 
   return Carpool.find({users: userId})
+    .populate('users', '-password')
     .populate('host', '-password')
     .then(carpools => res.json(carpools))
     .catch(err => res.status(500).json(err));
