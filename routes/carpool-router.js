@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
 
 // Post to register a new user
 router.post('/', jsonParser,  async (req, res) =>  {
-  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details} = req.body;  
+  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details, days} = req.body;  
   let start = `${startAddress.streetNumber} ${startAddress.streetName} ${startAddress.city} ${startAddress.state} ${startAddress.zipcode}`;  
 
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
@@ -63,6 +63,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
     openSeats,
     details,
     host: req.user._id,
+    days,
     users: [req.user._id]
   };
 

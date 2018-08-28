@@ -41,6 +41,9 @@ const CarpoolSchema = mongoose.Schema({
   openSeats: {type: String},
   host: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   details: {type: String, required: true},
+  days: [
+    {type: String}
+  ],
   users: [
     {
       type: mongoose.Schema.Types.ObjectId, 
