@@ -20,8 +20,8 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 router.get('/', (req, res) => {
   const userId = req.user._id;
 
-  return Carpool.find({host: userId}) // host || users array is userId
-    // .then(carpools => res.json(carpools.map(carpools => carpools.serialize())))
+  return Carpool.find({host: userId})
+    .populate('users', '-password')
     .then(carpools => res.json(carpools))
     .catch(err => res.status(500).json(err));
 });
@@ -62,18 +62,31 @@ router.post('/', jsonParser,  async (req, res) =>  {
     arrivalTime,
     openSeats,
     details,
-    host: req.user._id
+    host: req.user._id,
+    users: [req.user._id]
   };
 
   console.log(tempObj);
   return Carpool.create(tempObj)
     .then(carpool => {  
-      // console.log(carpool);
       return res.status(201).json(carpool);
     })
     .catch(err => {
       res.status(500).json({code: 500, message: err});
     });
+});
+
+router.put('/', (req, res, next) => {
+  
+  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users: req.user._id}}, {new: true})
+    .then(carpool => {
+      console.log(carpool);
+      return res.status(201).json(carpool);
+    })
+    .catch(err => {
+      res.status(500).json({code: 500, message: err});
+    });
+
 });
 
 module.exports = router;

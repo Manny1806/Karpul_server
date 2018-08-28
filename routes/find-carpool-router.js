@@ -32,7 +32,9 @@ router.get('/', async (req, res) => {
 
   return Carpool.find({ "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
- ).then(x => {   
+ )
+ .populate('users', '-password')
+ .then(x => {   
   return res.status(201).json(x);
 }
 

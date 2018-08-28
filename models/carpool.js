@@ -41,11 +41,13 @@ const CarpoolSchema = mongoose.Schema({
   openSeats: {type: String},
   host: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   details: {type: String, required: true},
-  //users: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId, ref: 'User'
-  //   }
-  // ]
+  users: [
+    {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User',
+      unique: true
+    }
+  ]
 });
 
 CarpoolSchema.index({'startAddress.location': '2dsphere' });
