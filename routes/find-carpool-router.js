@@ -30,7 +30,9 @@ router.get('/', async (req, res) => {
   const d = new Date();
   const n = d.getDay();
   const METERS_PER_MILE = 1609.34;
+  let currentTimeLocal = d.toLocaleTimeString();
   let day = '';
+
 
   switch(n){
     case 1: 
@@ -56,15 +58,22 @@ router.get('/', async (req, res) => {
       break;
   }
 
-  console.log(n,day);
+  function getFutureCarpools(arrivalTime){
+
+  }
+
+  //$where: "getFutureCarpools(this.arrivalTime)"
   return Carpool.find({ "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } },
-    "days": `${day}`}
-  )
+    "days": `${day}`    
+  })
     .populate('host', '-password')
     .then(x => {   
-      x.geoCoord = [coord.Longitude,coord.Latitude];
-      return res.status(201).json(x);
+      let response = {
+        geoCoord: [coord.Longitude,coord.Latitude],
+        results: x
+      };      
+      return res.status(201).json(response);
     });
 });
 
