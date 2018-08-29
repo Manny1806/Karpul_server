@@ -14,18 +14,14 @@ const GeoSchema = new mongoose.Schema({
 const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
   startAddress: {
-    streetNumber: {type: String, required: true},
-    streetName: {type: String, required: true},
+    streetAddress: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
-    zipcode: {type: String, required: true},
     location: GeoSchema},  
   endAddress: {
-    streetNumber: {type: String, required: true},
-    streetName: {type: String, required: true},
+    streetAddress: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
-    zipcode: {type: String, required: true},
     location: GeoSchema},
   arrivalTime: {type: String, required: true},
   openSeats: {type: String},
