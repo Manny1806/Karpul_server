@@ -30,7 +30,7 @@ router.get('/', (req, res) => {
 // Post to register a new user
 router.post('/', jsonParser,  async (req, res) =>  {
   let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details, days} = req.body;  
-  let start = `${startAddress.streetNumber} ${startAddress.streetName} ${startAddress.city} ${startAddress.state} ${startAddress.zipcode}`;  
+  let start = `${startAddress.streetAddress} ${startAddress.city} ${startAddress.state}`;  
 
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
                         .then((response) => {
@@ -43,7 +43,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
   const geoStartCoordinates = generateGeoCoordinates(coord);
   startAddress.location = {coordinates: geoStartCoordinates, type:"Point"};
 
-  let end = `${endAddress.streetNumber} ${endAddress.streetName} ${endAddress.city} ${endAddress.state} ${endAddress.zipcode}`;  
+  let end = `${endAddress.streetAddress} ${endAddress.city} ${endAddress.state}`;  
   const coordEnd = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${end}`)
                           .then((response) => {
                             if (response.status >= 400) {
