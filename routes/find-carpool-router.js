@@ -27,22 +27,45 @@ router.get('/', async (req, res) => {
                         })
                         .catch(err => err);
   
-
+  const d = new Date();
+  const n = d.getDay();
   const METERS_PER_MILE = 1609.34;
+  let day = '';
 
+  switch(n){
+    case 1: 
+      day = 'Mon';
+      break;
+    case 2: 
+      day = 'Tues';
+      break;
+    case 3: 
+      day = 'Wed';
+      break;
+    case 4: 
+      day = 'Thurs';
+      break;
+    case 5: 
+      day = 'Fri';
+      break;
+    case 6: 
+      day = 'Sat';
+      break;
+    case 7: 
+      day = 'Sun';
+      break;
+  }
+
+  console.log(n,day);
   return Carpool.find({ "endAddress.location": { $nearSphere: 
-    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
- )
+    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } },
+    "days": `${day}`}
+  )
     .populate('host', '-password')
     .then(x => {   
       x.geoCoord = [coord.Longitude,coord.Latitude];
-    return res.status(201).json(x);
-}
-
-);
-                        
-              
-  
+      return res.status(201).json(x);
+    });
 });
 
 module.exports = router;

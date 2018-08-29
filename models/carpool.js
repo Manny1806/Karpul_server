@@ -10,16 +10,6 @@ const GeoSchema = new mongoose.Schema({
   type: {type: String, default: 'Point'},
   coordinates: []
 });
-// const GeoSchema = new mongoose.Schema({
-//   type: {
-//     type: String,
-//     default: 'Point'
-//   },
-//   coordinates: {
-//     type: [Number],
-//     index: '2dsphere'
-//   }
-// });
 
 const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
