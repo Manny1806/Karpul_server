@@ -19,12 +19,10 @@ router.get('/', async (req, res) => {
   let {address,days,from,to} = req.query;    
 
 
-  const fromTime = from.split(":").map(digit => parseInt(digit));
-  const toTime = to.split(":").map(digit => parseInt(digit));
-
-
-
-
+  if(from !== undefined && to !== undefined){
+    const fromTime = from.split(":").map(digit => parseInt(digit));
+    const toTime = to.split(":").map(digit => parseInt(digit));
+  }
   //get longitude and latitude
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${address}`)
                         .then((response) => {
@@ -39,14 +37,6 @@ router.get('/', async (req, res) => {
 
   const daysList = days && days.split(",").map(day => ({days:`${day}`}));
 
-  let mongoQueryObj = { "endAddress.location": { $nearSphere: 
-    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
-  };
-
-  if(daysList){
-    mongoQueryObj['$or'] = daysList;
-  } 
-  
   if(fromTime && toTime){
     mongoQueryObj['$and'] = [
       
@@ -65,19 +55,17 @@ router.get('/', async (req, res) => {
         { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
   }
 
-<<<<<<< HEAD
-  console.log(n,day);
-  return Carpool.find({ "endAddress.location": { $nearSphere: 
-    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
-  )
-=======
+
+  let mongoQueryObj = { "endAddress.location": { $nearSphere: 
+    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
+  };
+
+  if(daysList){
+    mongoQueryObj['$or'] = daysList;
+  } 
   
-
-      
-
   //$where: "getFutureCarpools(this.arrivalTime)"
   return Carpool.find(mongoQueryObj)
->>>>>>> feature/pending-requests
     .populate('host', '-password')
     .then(x => {   
       let response = {

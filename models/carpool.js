@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-
-
 const GeoSchema = new mongoose.Schema({
   type: {type: String, default: 'Point'},
   coordinates: []
@@ -15,27 +13,13 @@ const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
   startAddress: {
     streetAddress: {type: String, required: true},
-<<<<<<< HEAD
     city: {type: String, required: true},
     state: {type: String, required: true},
-    location: GeoSchema},  
+    location: GeoSchema},    
   endAddress: {
-    streetAddress: {type: String, required: true},
+    streetAddress: {type: String, required: true},    
     city: {type: String, required: true},
-    state: {type: String, required: true},
-=======
-    // streetName: {type: String, required: true},
-    city: {type: String, required: true},
-    state: {type: String, required: true},
-    // zipcode: {type: String, required: true},
-    location: GeoSchema},  
-  endAddress: {
-    streetAddress: {type: String, required: true},
-    // streetName: {type: String, required: true},
-    city: {type: String, required: true},
-    state: {type: String, required: true},
-    // zipcode: {type: String, required: true},
->>>>>>> feature/pending-requests
+    state: {type: String, required: true},    
     location: GeoSchema},
   arrivalTime: {
     hrs: {type: Number, required: true},
@@ -49,8 +33,7 @@ const CarpoolSchema = mongoose.Schema({
   users: [
     {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'User',
-      unique: true
+      ref: 'User'      
     }
   ],
   pendingRequests: [
