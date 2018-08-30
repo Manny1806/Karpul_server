@@ -58,8 +58,7 @@ router.get('/', async (req, res) => {
 
   console.log(n,day);
   return Carpool.find({ "endAddress.location": { $nearSphere: 
-    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } },
-    "days": `${day}`}
+    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
   )
     .populate('host', '-password')
     .then(x => {   
