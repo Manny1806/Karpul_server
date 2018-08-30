@@ -1,11 +1,9 @@
 'use strict';
-
 const mongoose = require('mongoose');
-
 const { MONGODB_URI } = require('../config');
 
-const User = require('../models/user-model');
-const Carpool = require('../models/carpool');
+const {User} = require('../models/user-model');
+const {Carpool} = require('../models/carpool');
 
 const seedUsers = require('../db/seed/users');
 const seedCarpools = require('../db/seed/carpools');
@@ -17,13 +15,12 @@ mongoose.connect(MONGODB_URI)
     return mongoose.connection.db.dropDatabase();
   })
   .then(() => {
-    console.info('Seeding Database');
-    console.log(seedUsers);
+    console.info('Seeding Database');      
     return Promise.all([       
-       User.insertMany(seedUsers),
-       User.createIndexes(),
-       Carpool.insertMany(seedCarpools),      
-       Carpool.createIndexes()
+      User.insertMany(seedUsers),
+      User.createIndexes(),
+      Carpool.insertMany(seedCarpools),      
+      Carpool.createIndexes()
     ]);
   })
   .then(() => {
