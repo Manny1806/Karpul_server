@@ -16,7 +16,15 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 router.get('/', async (req, res) => {
   const userId = req.user._id;
   //destination entered by user in find carpools search bar
-  let {address} = req.query;    
+  let {address,days,from,to} = req.query;    
+
+
+  const fromTime = from.split(":").map(digit => parseInt(digit));
+  const toTime = to.split(":").map(digit => parseInt(digit));
+
+
+
+
   //get longitude and latitude
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${address}`)
                         .then((response) => {
@@ -26,44 +34,57 @@ router.get('/', async (req, res) => {
                           return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
                         })
                         .catch(err => err);
-  
-  const d = new Date();
-  const n = d.getDay();
-  const METERS_PER_MILE = 1609.34;
-  let day = '';
 
-  switch(n){
-    case 1: 
-      day = 'Mon';
-      break;
-    case 2: 
-      day = 'Tues';
-      break;
-    case 3: 
-      day = 'Wed';
-      break;
-    case 4: 
-      day = 'Thurs';
-      break;
-    case 5: 
-      day = 'Fri';
-      break;
-    case 6: 
-      day = 'Sat';
-      break;
-    case 7: 
-      day = 'Sun';
-      break;
+  const METERS_PER_MILE = 1609.34;
+
+  const daysList = days && days.split(",").map(day => ({days:`${day}`}));
+
+  let mongoQueryObj = { "endAddress.location": { $nearSphere: 
+    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
+  };
+
+  if(daysList){
+    mongoQueryObj['$or'] = daysList;
+  } 
+  
+  if(fromTime && toTime){
+    mongoQueryObj['$and'] = [
+      
+      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+             { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+    
+      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+             { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}
+              
+            ];
+
+    /* {$and : [{$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+        { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+        
+        {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+        { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
   }
 
+<<<<<<< HEAD
   console.log(n,day);
   return Carpool.find({ "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } } }
   )
+=======
+  
+
+      
+
+  //$where: "getFutureCarpools(this.arrivalTime)"
+  return Carpool.find(mongoQueryObj)
+>>>>>>> feature/pending-requests
     .populate('host', '-password')
     .then(x => {   
-      x.geoCoord = [coord.Longitude,coord.Latitude];
-      return res.status(201).json(x);
+      let response = {
+        geoCoord: [coord.Longitude,coord.Latitude],
+        results: x
+      };      
+      return res.status(201).json(response);
     });
 });
 
