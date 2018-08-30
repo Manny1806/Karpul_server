@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-
-
 const GeoSchema = new mongoose.Schema({
   type: {type: String, default: 'Point'},
   coordinates: []
@@ -17,11 +15,11 @@ const CarpoolSchema = mongoose.Schema({
     streetAddress: {type: String, required: true},
     city: {type: String, required: true},
     state: {type: String, required: true},
-    location: GeoSchema},  
+    location: GeoSchema},    
   endAddress: {
-    streetAddress: {type: String, required: true},
+    streetAddress: {type: String, required: true},    
     city: {type: String, required: true},
-    state: {type: String, required: true},
+    state: {type: String, required: true},    
     location: GeoSchema},
   arrivalTime: {
     hrs: {type: Number, required: true},
@@ -36,6 +34,13 @@ const CarpoolSchema = mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'User'      
+    }
+  ],
+  pendingRequests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      unique: true
     }
   ]
 });

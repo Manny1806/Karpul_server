@@ -23,6 +23,7 @@ router.get('/', (req, res) => {
   return Carpool.find({users: userId})
     .populate('users', '-password')
     .populate('host', '-password')
+    .populate('pendingRequests', '-password')
     .then(carpools => res.json(carpools))
     .catch(err => res.status(500).json(err));
 });
@@ -80,15 +81,40 @@ router.post('/', jsonParser,  async (req, res) =>  {
     });
 });
 
-// User joining carpool
+// User requesting to join carpool
 router.put('/', (req, res, next) => {
-  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users:req.user._id}}, {new: true})
+  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {pendingRequests: req.user._id}}, {new: true})
   .then(carpool => {
     res.status(201).json(carpool);
   })
   .catch(err => {
     res.status(500).json({code: 500, message: err});
   })
+})
+
+// Host accepting/declining user request to join
+router.put('/request', (req, res, next) => { // frontend needs to send to this endpoint carpoolId and userId
+  //let userId = req.body.userId;
+  //let carpoolid = req.body.carpoolId;
+
+  if (req.body.accepted === true) {
+    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users: userId}}, {$pull: {pendingRequests: userId}})
+      .then(carpool => {
+        res.status(201).json(carpool);
+      })
+      .catch(err => {
+        res.status(500).json({code: 500, message: err});
+      })
+  } else {
+    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$pull: {pendingRequests: userId}})
+      .then(carpool => {
+        res.status(201).json(carpool);
+      })
+      .catch(err => {
+        res.status(500).json({code: 500, message: err});
+      })
+  }
+ 
 })
 
 // User leaving carpool
