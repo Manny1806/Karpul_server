@@ -15,4 +15,4 @@ module.exports = {
 };
 
 
-//MONGODB_URI=mongodb://dev:dev123@ds129762.mlab.com:29762/karpul
+//
