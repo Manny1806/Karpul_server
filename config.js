@@ -13,3 +13,6 @@ module.exports = {
   app_code: process.env.app_code || 'fail',
   GEOCODER_API: process.env.GEOCODER_API || '' 
 };
+
+
+//MONGODB_URI=mongodb://dev:dev123@ds129762.mlab.com:29762/karpul
