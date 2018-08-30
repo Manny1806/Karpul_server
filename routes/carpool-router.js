@@ -56,11 +56,13 @@ router.post('/', jsonParser,  async (req, res) =>  {
   const geoEndCoordinates = generateGeoCoordinates(coordEnd);
   endAddress.location = {coordinates: geoEndCoordinates, type:"Point"};
 
+  const arrive = arrivalTime.split(":").map(digit => parseInt(digit)); 
+
   const tempObj = {
     carpoolTitle,
     startAddress,
     endAddress,
-    arrivalTime,
+    arrivalTime: {hrs: arrive[0],mins: arrive[1]},
     openSeats,
     details,
     host: req.user._id,
