@@ -96,13 +96,25 @@ router.put('/', (req, res, next) => {
 router.put('/request', (req, res, next) => { // frontend needs to send to this endpoint carpoolId and userId
   //let userId = req.body.userId;
   //let carpoolid = req.body.carpoolId;
-  return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users: userId}}, {$pull: {pendingRequests: userId}})
-  .then(carpool => {
-    res.status(201).json(carpool);
-  })
-  .catch(err => {
-    res.status(500).json({code: 500, message: err});
-  })
+
+  if (req.body.accepted === true) {
+    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users: userId}}, {$pull: {pendingRequests: userId}})
+      .then(carpool => {
+        res.status(201).json(carpool);
+      })
+      .catch(err => {
+        res.status(500).json({code: 500, message: err});
+      })
+  } else {
+    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$pull: {pendingRequests: userId}})
+      .then(carpool => {
+        res.status(201).json(carpool);
+      })
+      .catch(err => {
+        res.status(500).json({code: 500, message: err});
+      })
+  }
+ 
 })
 
 // User leaving carpool
