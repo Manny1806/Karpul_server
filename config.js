@@ -13,6 +13,3 @@ module.exports = {
   app_code: process.env.app_code || 'fail',
   GEOCODER_API: process.env.GEOCODER_API || '' 
 };
-
-
-//

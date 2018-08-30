@@ -13,6 +13,15 @@ const CarpoolSchema = mongoose.Schema({
   carpoolTitle: {type: String, required: true},
   startAddress: {
     streetAddress: {type: String, required: true},
+<<<<<<< HEAD
+    city: {type: String, required: true},
+    state: {type: String, required: true},
+    location: GeoSchema},    
+  endAddress: {
+    streetAddress: {type: String, required: true},    
+    city: {type: String, required: true},
+    state: {type: String, required: true},    
+=======
 
     city: {type: String, required: true},
     state: {type: String, required: true},
@@ -22,6 +31,7 @@ const CarpoolSchema = mongoose.Schema({
     city: {type: String, required: true},
     state: {type: String, required: true},
 
+>>>>>>> 7de88239064b55aba4db4227b266e7a0c9125edb
     location: GeoSchema},
   arrivalTime: {
     hrs: {type: Number, required: true},
