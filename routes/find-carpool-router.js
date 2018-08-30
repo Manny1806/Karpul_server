@@ -18,10 +18,12 @@ router.get('/', async (req, res) => {
   //destination entered by user in find carpools search bar
   let {address,days,from,to} = req.query;    
 
-
+  let fromTime;
+  let toTime
   if(from !== undefined && to !== undefined){
-    const fromTime = from.split(":").map(digit => parseInt(digit));
-    const toTime = to.split(":").map(digit => parseInt(digit));
+    // console.log(triggered)
+    fromTime = from.split(":").map(digit => parseInt(digit));
+    toTime = to.split(":").map(digit => parseInt(digit));
   }
   //get longitude and latitude
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${address}`)
@@ -37,29 +39,28 @@ router.get('/', async (req, res) => {
 
   const daysList = days && days.split(",").map(day => ({days:`${day}`}));
 
-  if(fromTime && toTime){
-    mongoQueryObj['$and'] = [
-      
-      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
-             { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
-    
-      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
-             { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}
-              
-            ];
-
-    /* {$and : [{$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
-        { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
-        
-        {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
-        { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
-  }
-
-
-
   let mongoQueryObj = { "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
   };
+
+  // if(fromTime !== undefined && toTime !== undefined){
+  //   mongoQueryObj['$and'] = [
+      
+  //     {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+  //            { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+    
+  //     {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+  //            { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}
+              
+  //           ];
+
+  //   /* {$and : [{$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+  //       { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+        
+  //       {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+  //       { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
+  // }
+
 
   if(daysList){
     mongoQueryObj['$or'] = daysList;
