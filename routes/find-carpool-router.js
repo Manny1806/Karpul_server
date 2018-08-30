@@ -55,11 +55,7 @@ router.get('/', async (req, res) => {
         { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
   }
 
-<<<<<<< HEAD
 
-  
-=======
->>>>>>> 4ef441c68171045e0effb9094539cb562413d726
 
   let mongoQueryObj = { "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
@@ -71,10 +67,6 @@ router.get('/', async (req, res) => {
   
   //$where: "getFutureCarpools(this.arrivalTime)"
   return Carpool.find(mongoQueryObj)
-<<<<<<< HEAD
-
-=======
->>>>>>> 4ef441c68171045e0effb9094539cb562413d726
     .populate('host', '-password')
     .then(x => {   
       let response = {
