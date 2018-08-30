@@ -56,6 +56,7 @@ router.get('/', async (req, res) => {
   }
 
 
+
   let mongoQueryObj = { "endAddress.location": { $nearSphere: 
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
   };
