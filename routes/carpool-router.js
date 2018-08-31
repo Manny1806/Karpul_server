@@ -68,7 +68,8 @@ router.post('/', jsonParser,  async (req, res) =>  {
     details,
     host: req.user._id,
     days,
-    users: [req.user._id]
+    users: [req.user._id],
+    pendingRequests: []
   };
 
   console.log(tempObj);
