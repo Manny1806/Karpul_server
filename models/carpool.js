@@ -35,14 +35,13 @@ const CarpoolSchema = mongoose.Schema({
   users: [
     {
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'User'      
+      ref: 'User'
     }
   ],
   pendingRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      unique: true
+      ref: 'User'
     }
   ]
 });
