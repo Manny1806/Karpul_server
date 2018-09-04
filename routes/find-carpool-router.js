@@ -16,7 +16,7 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 router.get('/', async (req, res) => {
   const userId = req.user._id;
   //destination entered by user in find carpools search bar
-  let {address,days,from,to} = req.query;    
+  let {address,days,from,to,radius} = req.query;    
 
   let fromTime;
   let toTime
@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
   const daysList = days && days.split(",").map(day => ({days:`${day}`}));
 
   let mongoQueryObj = { "endAddress.location": { $nearSphere: 
-    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: 5 * METERS_PER_MILE } }
+    { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: parseInt(radius, 10) * METERS_PER_MILE } }
   };
 
   // if(fromTime !== undefined && toTime !== undefined){
