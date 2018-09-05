@@ -68,7 +68,8 @@ router.post('/', jsonParser,  async (req, res) =>  {
     details,
     host: req.user._id,
     days,
-    users: [req.user._id]
+    users: [req.user._id],
+    pendingRequests: []
   };
 
   console.log(tempObj);
@@ -94,11 +95,19 @@ router.put('/', (req, res, next) => {
 
 // Host accepting/declining user request to join
 router.put('/request', (req, res, next) => { // frontend needs to send to this endpoint carpoolId and userId
-  //let userId = req.body.userId;
-  //let carpoolid = req.body.carpoolId;
+  let userId = req.body.userId;
+  let carpoolid = req.body.carpoolId;
 
   if (req.body.accepted === true) {
-    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$addToSet: {users: userId}}, {$pull: {pendingRequests: userId}})
+    console.log('accepted, adding to users, pulling from pending', userId)
+    Carpool.findByIdAndUpdate(carpoolid, {$addToSet: {users: userId}})
+      .then(carpool => {
+        res.status(201).json(carpool);
+      })
+      .catch(err => {
+        res.status(500).json({code: 500, message: err});
+      })
+      Carpool.findByIdAndUpdate(carpoolid, {$pull: {pendingRequests: userId}})
       .then(carpool => {
         res.status(201).json(carpool);
       })
@@ -106,7 +115,8 @@ router.put('/request', (req, res, next) => { // frontend needs to send to this e
         res.status(500).json({code: 500, message: err});
       })
   } else {
-    return Carpool.findByIdAndUpdate(req.body.carpoolId, {$pull: {pendingRequests: userId}})
+    console.log('denied! pulling from pending')
+    return Carpool.findByIdAndUpdate(carpoolid, {$pull: {pendingRequests: userId}})
       .then(carpool => {
         res.status(201).json(carpool);
       })
