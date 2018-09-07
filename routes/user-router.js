@@ -91,8 +91,7 @@ router.post('/', jsonParser, (req, res) => {
   let {username, password, firstName, lastName, phone } = req.body;
   let profilePicUrl = "https://www.freeiconspng.com/uploads/no-image-icon-11.PNG"
   // Username and password come in pre-trimmed, otherwise we throw an error
-  // before this
-  console.log("here")
+  // before this  
   return User.find({username})
     .count()
     .then(count => {
@@ -105,12 +104,10 @@ router.post('/', jsonParser, (req, res) => {
           location: 'username'
         });
       }
-      // If there is no existing user, hash the password
-      console.log("here2")
+      // If there is no existing user, hash the password      
       return User.hashPassword(password);
     })
-    .then(hash => {
-      console.log("here3")
+    .then(hash => {      
       return User.create({
         username,
         password: hash,
@@ -120,8 +117,7 @@ router.post('/', jsonParser, (req, res) => {
         profilePicUrl
       });
     })
-    .then(user => {
-      console.log("here")
+    .then(user => {      
       return res.status(201).json(user.serialize());
     })
     .catch(err => {
@@ -159,24 +155,22 @@ router.get('/userData/:id', (req, res) => {
 
 router.post('/userData', (req, res) => {
   return User.findById(req.body.id)
-    .then(user => {
-      console.log(req.body)
-      user.bio = req.body.bio
-      user.phone = req.body.phone
-      user.state = req.body.state
-      user.city = req.body.city
-      user.save()
-      return res.json(user)})
+    .then(user => {      
+      user.bio = req.body.bio;
+      user.phone = req.body.phone;
+      user.state = req.body.state;
+      user.city = req.body.city;
+      user.save();
+      return res.json(user);})
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-router.post('/:id', (req, res) => {
-  console.log(req.params.id)
+router.post('/:id', (req, res) => {  
   return User.findById(req.params.id)
     .then(user => {
-      user.profilePicUrl = req.body.profilePicUrl
-      user.save()
-      return user
+      user.profilePicUrl = req.body.profilePicUrl;
+      user.save();
+      return user;
     })
     .then(user => res.json(user.serialize()))
     .catch(err => res.status(500).json({message: 'Internal server error'}));

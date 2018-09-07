@@ -20,8 +20,7 @@ router.get('/', async (req, res) => {
 
   let fromTime;
   let toTime
-  if(from !== undefined && to !== undefined){
-    // console.log(triggered)
+  if(from !== undefined && to !== undefined){    
     fromTime = from.split(":").map(digit => parseInt(digit));
     toTime = to.split(":").map(digit => parseInt(digit));
   }
@@ -43,23 +42,23 @@ router.get('/', async (req, res) => {
     { $geometry: { type: "Point", coordinates: [coord.Longitude,coord.Latitude] }, $maxDistance: parseInt(radius, 10) * METERS_PER_MILE } }
   };
 
-  // if(fromTime !== undefined && toTime !== undefined){
-  //   mongoQueryObj['$and'] = [
+  if(fromTime !== undefined && toTime !== undefined){
+    mongoQueryObj['$and'] = [
       
-  //     {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
-  //            { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+             { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
     
-  //     {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
-  //            { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}
+      {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+             { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}
               
-  //           ];
+            ];
 
-  //   /* {$and : [{$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
-  //       { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
+    {$and : [{$or: [{ $and: [ {'arrivalTime.hrs': {$eq:fromTime[0]}},{'arrivalTime.mins': {$gte:fromTime[1]}} ] },
+        { $and: [ {'arrivalTime.hrs': {$gt:fromTime[0]}} ] }]},
         
-  //       {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
-  //       { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    } */
-  // }
+        {$or: [{ $and: [ {'arrivalTime.hrs': {$eq:toTime[0]}},{'arrivalTime.mins': {$lte:toTime[1]}} ] },
+        { $and: [ {'arrivalTime.hrs': {$lt:toTime[0]}} ] }]}]    }
+  }
 
 
   if(daysList){

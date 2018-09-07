@@ -9,13 +9,12 @@ const router = express.Router();
 const jsonParser = bodyParser.json();
 
 
-router.post('/', (req, res) => {
-    console.log(req.body.id)
+router.post('/', (req, res) => {    
   return User.findById(req.body.id)
     .then(user => {
-      user.profilePicUrl = req.body.profilePicUrl
-      user.save()
-      return user
+      user.profilePicUrl = req.body.profilePicUrl;
+      user.save();
+      return user;
     })
     .then(user => res.json(user.serialize()))
     .catch(err => res.status(500).json({message: err}));
