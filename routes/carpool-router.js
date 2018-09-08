@@ -30,7 +30,11 @@ router.get('/', (req, res) => {
 
 // Post to register a new user
 router.post('/', jsonParser,  async (req, res) =>  {
-  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details, days} = req.body;  
+  let {carpoolTitle, startAddress, endAddress, arrivalTime, openSeats, details, days} = req.body;
+  let x = startAddress.streetAddress.split(",")
+  startAddress.streetAddress = x[0]
+  startAddress.city = x[1]
+  startAddress.state = x[2]
   let start = `${startAddress.streetAddress} ${startAddress.city} ${startAddress.state}`;  
 
   const coord = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${start}`)
@@ -38,12 +42,16 @@ router.post('/', jsonParser,  async (req, res) =>  {
                           if (response.status >= 400) {
                             throw new Error('Bad response from server');
                           }
-                          return response.json().then(x => x.Response.View[0].Result[0].Location.NavigationPosition[0]);
+                          return response.json().then(x =>  x.Response.View[0].Result[0].Location.NavigationPosition[0])
                         })
-                        .catch(err => err);
+                        .catch(err => err)
   const geoStartCoordinates = generateGeoCoordinates(coord);
   startAddress.location = {coordinates: geoStartCoordinates, type:"Point"};
-
+  
+  x = endAddress.streetAddress.split(",")
+  endAddress.streetAddress = x[0]
+  endAddress.city = x[1]
+  endAddress.state = x[2]
   let end = `${endAddress.streetAddress} ${endAddress.city} ${endAddress.state}`;  
   const coordEnd = await fetch(`${config.GEOCODER_API}?app_id=${config.app_id}&app_code=${config.app_code}&searchText=${end}`)
                           .then((response) => {
@@ -72,7 +80,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
     pendingRequests: []
   };
 
-  console.log(tempObj);
+  // console.log(tempObj);
   return Carpool.create(tempObj)
     .then(carpool => {  
       return res.status(201).json(carpool);
