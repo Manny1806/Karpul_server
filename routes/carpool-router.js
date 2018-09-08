@@ -80,11 +80,7 @@ router.post('/', jsonParser,  async (req, res) =>  {
     pendingRequests: []
   };
 
-<<<<<<< HEAD
-  // console.log(tempObj);
-=======
   
->>>>>>> 037cf8a0f2d270327cfdbade5397e2bd34f07511
   return Carpool.create(tempObj)
     .then(carpool => {  
       return res.status(201).json(carpool);
