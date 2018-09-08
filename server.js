@@ -59,7 +59,7 @@ app.use('/api/findCarpool', findCarpoolRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-// Initial server test
+// Initial server tests
 app.get('/', (req, res) => {
   console.log(res.json({message:'Hello Express!'}));
 });
@@ -135,7 +135,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Listen for incoming connections
+//Listen for incoming connections
 if (process.env.NODE_ENV !== 'test') {
   // Connect to DB and Listen for incoming connections
   mongoose.connect(MONGODB_URI)
