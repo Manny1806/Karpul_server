@@ -1,6 +1,6 @@
 # Karpul_server
 
-##API endspoints
+## API endspoints
 -----------------
 All requests and responses are in JSON format.
 
